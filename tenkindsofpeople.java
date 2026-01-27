@@ -1,37 +1,61 @@
 // https://open.kattis.com/problems/10kindsofpeople
 import java.util.Scanner;
+import java.util.Queue;
+import java.util.LinkedList;
 
 public class tenkindsofpeople {
-    private static int r;
-    private static int c;
+    private static int rows;
+    private static int cols;
     private static int[][] map;
+    private static int[][] component;
+    private static int[] componentValue;
+    private static int componentCount;
+
     public static void main(String[] args) {
         Scanner scan = new Scanner(System.in);
-        r = scan.nextInt();
-        c = scan.nextInt();
-        //System.err.println("r: " + r + " c: " + c);
-        map = new int[r][c];
+        rows = scan.nextInt();
+        cols = scan.nextInt();
+
+        map = new int[rows][cols];
+        component = new int[rows][cols];
+
         scan.nextLine(); // consume the rest of the line
-        for(int i = 0; i < r; i++) {
+        for(int i = 0; i < rows; i++) {
             String line = scan.nextLine();
-            for (int j = 0; j < c; j++) {
-                map[i][j] = line.charAt(j)-'0';
-                //System.err.println("map[" + i + "][" + j + "] = " + map[i][j]);
+            for (int j = 0; j < cols; j++) {
+                map[i][j] = line.charAt(j) - '0';
+                component[i][j] = -1;
             }
         }
+
+        // Label all connected components using BFS
+        componentValue = new int[rows * cols + 1];
+        componentCount = 0;
+        for(int i = 0; i < rows; i++) {
+            for(int j = 0; j < cols; j++) {
+                if(component[i][j] == -1) {
+                    bfsLabel(i, j, componentCount, map[i][j]);
+                    componentCount++;
+                }
+            }
+        }
+
+        // Answer queries
         int num_queries = scan.nextInt();
-        //System.err.println("Number of queries: " + num_queries);
         for (int i = 0; i < num_queries; i++) {
-            int r1 = scan.nextInt();
-            int c1 = scan.nextInt();
-            int r2 = scan.nextInt();
-            int c2 = scan.nextInt();
-            //System.err.println("Query " + (i+1) + ": (" + r1 + ", " + c1 + ") to (" + r2 + ", " + c2 + ")");
-            int result = solve(map, r1-1, c1-1, r2-1, c2-1);
-            if(result == 0) {
-                System.out.println("binary");
-            } else if(result == 1) {
-                System.out.println("decimal");
+            int r1 = scan.nextInt() - 1;
+            int c1 = scan.nextInt() - 1;
+            int r2 = scan.nextInt() - 1;
+            int c2 = scan.nextInt() - 1;
+
+            // Check if both points are in the same connected component
+            if(component[r1][c1] == component[r2][c2]) {
+                int value = componentValue[component[r1][c1]];
+                if(value == 0) {
+                    System.out.println("binary");
+                } else {
+                    System.out.println("decimal");
+                }
             } else {
                 System.out.println("neither");
             }
@@ -39,35 +63,29 @@ public class tenkindsofpeople {
         scan.close();
     }
 
-    public static int solve(int[][] map, int r1, int c1, int r2, int c2) {
-        // r1, c1, r2, c2 are 0-indexed
-        if(map[r1][c1] != map[r2][c2]) {
-          return -1;
+    private static void bfsLabel(int startR, int startC, int compId, int value) {
+        Queue<int[]> queue = new LinkedList<>();
+        queue.add(new int[]{startR, startC});
+        component[startR][startC] = compId;
+        componentValue[compId] = value;
+
+        int[][] directions = {{-1, 0}, {1, 0}, {0, -1}, {0, 1}}; // north, south, west, east
+
+        while(!queue.isEmpty()) {
+            int[] current = queue.poll();
+            int r = current[0];
+            int c = current[1];
+
+            for(int[] dir : directions) {
+                int newR = r + dir[0];
+                int newC = c + dir[1];
+
+                if(newR >= 0 && newR < rows && newC >= 0 && newC < cols &&
+                   component[newR][newC] == -1 && map[newR][newC] == value) {
+                    component[newR][newC] = compId;
+                    queue.add(new int[]{newR, newC});
+                }
+            }
         }
-        if(r1==r2 && c1==c2) {
-          return map[r1][c1] == 0 ? 0 : 1;
-        }
-        int result = -1;
-        // north
-        if(r1-1>=0 && r1-1<r && map[r1-1][c1] == map[r1][c1]) {
-            map[r1][c1] = -1; // mark as visited
-            result = solve(map, r1-1, c1, r2, c2);
-        }
-        // south
-        if(result == -1 && r1+1>=0 && r1+1<r && map[r1+1][c1] == map[r1][c1]) {
-            map[r1][c1] = -1; // mark as visited
-            result = solve(map, r1+1, c1, r2, c2);
-        }
-        // west
-        if(result == -1 && c1-1>=0 && c1-1<c && map[r1][c1-1] == map[r1][c1]) {
-            map[r1][c1] = -1; // mark as visited
-            result = solve(map, r1, c1-1, r2, c2);
-        }
-        // east
-        if(result == -1 && c1+1>=0 && c1+1<c && map[r1][c1+1] == map[r1][c1]) {
-            map[r1][c1] = -1; // mark as visited
-            result = solve(map, r1, c1+1, r2, c2);
-        }
-        return result;
     }
 }
