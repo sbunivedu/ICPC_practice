@@ -80,35 +80,150 @@ if(component[r1][c1] == component[r2][c2]) {
 
 ### Sample Test 1
 ```
-Input:  1 4
-        1100
-        2
-        1 1 1 4
-        1 1 1 1
+Input:
+1 4
+1100
+2
+1 1 1 4
+1 1 1 1
 
-Output: neither
-        decimal
+Output:
+neither
+decimal
 ```
 ✓ Correct
 
 ### Sample Test 2 (Checkerboard)
+Input:
 ```
-Input:  3 3
-        010
-        101
-        010
-        4
-        1 1 1 2  → Different values (0 and 1)
-        1 1 2 1  → Different values (0 and 1)
-        1 2 3 2  → Different values (0 and 1)
-        2 2 2 2  → Same cell (0)
+3 3
+010
+101
+010
+4
+1 1 1 2  → Different values (0 and 1)
+1 1 2 1  → Different values (0 and 1)
+1 2 3 2  → Different values (0 and 1)
+2 2 2 2  → Same cell (0)
+```
 
-Output: neither
-        neither
-        neither
-        binary
+Output:
 ```
-✓ Correct
+neither
+neither
+neither
+binary
+```
+
+### Sample Test 3
+Input:
+```
+5 5
+01110
+01010
+00010
+11011
+11111
+6
+1 1 3 3
+1 2 5 4
+1 1 1 5
+4 1 5 3
+2 3 4 3
+2 2 3 5
+```
+Output:
+```
+binary
+decimal
+neither
+decimal
+binary
+neither
+```
+Trace:
+```
+INITIALIZATION PHASE
+====================
+
+Input map (5x5):
+  0 1 2 3 4
+0 0 1 1 1 0
+1 0 1 0 1 0
+2 0 0 0 1 0
+3 1 1 0 1 1
+4 1 1 1 1 1
+
+BFS Labeling (scanning left-to-right, top-to-bottom):
+────────────────────────────────────────────────────────
+
+Position (0,0): value=0, unvisited → Start BFS with componentId=0
+  BFS traversal: (0,0) → explores 4 neighbors
+  Labels as component 0: {(0,0), (1,0), (2,0)}
+  componentValue[0] = 0 (binary)
+
+Position (0,1): value=1, unvisited → Start BFS with componentId=1
+  BFS traversal: (0,1) → (0,2) → (0,3) → (1,1) → (1,2) → (1,3) → (2,3) → (3,1) → (3,3) → (4,0) → (4,1) → (4,2) → (4,3) → (4,4) → (3,4)
+  Labels as component 1: {(0,1), (0,2), (0,3), (1,1), (1,2), (1,3), (2,3), (3,1), (3,3), (4,0), (4,1), (4,2), (4,3), (4,4), (3,4)}
+  componentValue[1] = 1 (decimal)
+
+Position (0,4): value=0, unvisited → Start BFS with componentId=2
+  Labels as component 2: {(0,4), (1,4), (2,4)}
+  componentValue[2] = 0 (binary)
+
+Position (2,1): value=0, unvisited → Start BFS with componentId=3
+  Labels as component 3: {(2,1), (2,2)}
+  componentValue[3] = 0 (binary)
+
+Position (3,0): value=1, unvisited → Start BFS with componentId=4
+  Labels as component 4: {(3,0)}
+  componentValue[4] = 1 (decimal)
+
+Position (3,2): value=0, unvisited → Start BFS with componentId=5
+  Labels as component 5: {(3,2)}
+  componentValue[5] = 0 (binary)
+
+Final component map:
+  0 1 2 3 4
+0 0 1 1 1 2
+1 0 1 3 1 2
+2 0 3 3 1 2
+3 4 1 5 1 1
+4 1 1 1 1 1
+
+QUERY PHASE
+===========
+
+Query 1: (1,1) → (3,3)  [Converts to 0-indexed: (0,0) → (2,2)]
+  component[0][0] = 0 (component 0)
+  component[2][2] = 3 (component 3)
+  0 ≠ 3 → Output: "neither"
+
+Query 2: (1,2) → (5,4)  [Converts to 0-indexed: (0,1) → (4,3)]
+  component[0][1] = 1 (component 1)
+  component[4][3] = 1 (component 1)
+  1 = 1, componentValue[1] = 1 → Output: "decimal"
+
+Query 3: (1,1) → (1,5)  [Converts to 0-indexed: (0,0) → (0,4)]
+  component[0][0] = 0 (component 0)
+  component[0][4] = 2 (component 2)
+  0 ≠ 2 → Output: "neither"
+
+Query 4: (4,1) → (5,3)  [Converts to 0-indexed: (3,0) → (4,2)]
+  component[3][0] = 4 (component 4)
+  component[4][2] = 1 (component 1)
+  4 ≠ 1 → Output: "neither"
+
+Query 5: (2,3) → (4,3)  [Converts to 0-indexed: (1,2) → (3,2)]
+  component[1][2] = 3 (component 3)
+  component[3][2] = 5 (component 5)
+  3 ≠ 5 → Output: "neither"
+
+Query 6: (2,2) → (3,5)  [Converts to 0-indexed: (1,1) → (2,4)]
+  component[1][1] = 1 (component 1)
+  component[2][4] = 2 (component 2)
+  1 ≠ 2 → Output: "neither"
+```
 
 ## Complexity Analysis
 

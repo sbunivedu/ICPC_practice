@@ -63,6 +63,7 @@ public class tenkindsofpeople {
         scan.close();
     }
 
+    // BFS to label connected components
     private static void bfsLabel(int startR, int startC, int compId, int value) {
         Queue<int[]> queue = new LinkedList<>();
         queue.add(new int[]{startR, startC});
