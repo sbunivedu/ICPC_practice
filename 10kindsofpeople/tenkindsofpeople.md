@@ -91,7 +91,6 @@ Output:
 neither
 decimal
 ```
-✓ Correct
 
 ### Sample Test 2 (Checkerboard)
 Input:
@@ -159,36 +158,40 @@ BFS Labeling (scanning left-to-right, top-to-bottom):
 
 Position (0,0): value=0, unvisited → Start BFS with componentId=0
   BFS traversal: (0,0) → explores 4 neighbors
-  Labels as component 0: {(0,0), (1,0), (2,0)}
+  Labels as component 0: {(0,0), (1,0), (2,0), (2, 1), (2,2), (1,2), (3,2)}
   componentValue[0] = 0 (binary)
 
+component map:
+  0 1 2 3 4
+0 0 1 1 1 0
+1 0 1 0 1 0
+2 0 0 0 1 0
+3 1 1 0 1 1
+4 1 1 1 1 1
+
 Position (0,1): value=1, unvisited → Start BFS with componentId=1
-  BFS traversal: (0,1) → (0,2) → (0,3) → (1,1) → (1,2) → (1,3) → (2,3) → (3,1) → (3,3) → (4,0) → (4,1) → (4,2) → (4,3) → (4,4) → (3,4)
+  BFS traversal: (0,1) → (1,1) → (0,2) → (0,3) → (1,3) → (2,3) → (3,3) → (4,0) → (4,1) → (4,2) → (4,3) → (4,4) → (3,4)
   Labels as component 1: {(0,1), (0,2), (0,3), (1,1), (1,2), (1,3), (2,3), (3,1), (3,3), (4,0), (4,1), (4,2), (4,3), (4,4), (3,4)}
   componentValue[1] = 1 (decimal)
+
+component map:
+  0 1 2 3 4
+0 0 1 1 1 0
+1 0 1 0 1 0
+2 0 0 0 1 0
+3 1 1 0 1 1
+4 1 1 1 1 1
 
 Position (0,4): value=0, unvisited → Start BFS with componentId=2
   Labels as component 2: {(0,4), (1,4), (2,4)}
   componentValue[2] = 0 (binary)
 
-Position (2,1): value=0, unvisited → Start BFS with componentId=3
-  Labels as component 3: {(2,1), (2,2)}
-  componentValue[3] = 0 (binary)
-
-Position (3,0): value=1, unvisited → Start BFS with componentId=4
-  Labels as component 4: {(3,0)}
-  componentValue[4] = 1 (decimal)
-
-Position (3,2): value=0, unvisited → Start BFS with componentId=5
-  Labels as component 5: {(3,2)}
-  componentValue[5] = 0 (binary)
-
 Final component map:
   0 1 2 3 4
 0 0 1 1 1 2
-1 0 1 3 1 2
-2 0 3 3 1 2
-3 4 1 5 1 1
+1 0 1 0 1 2
+2 0 0 0 1 2
+3 1 1 0 1 1
 4 1 1 1 1 1
 
 QUERY PHASE
@@ -196,8 +199,8 @@ QUERY PHASE
 
 Query 1: (1,1) → (3,3)  [Converts to 0-indexed: (0,0) → (2,2)]
   component[0][0] = 0 (component 0)
-  component[2][2] = 3 (component 3)
-  0 ≠ 3 → Output: "neither"
+  component[2][2] = 0 (component 0)
+  0 = 0, componentValue[0] = 0 → Output: "binary"
 
 Query 2: (1,2) → (5,4)  [Converts to 0-indexed: (0,1) → (4,3)]
   component[0][1] = 1 (component 1)
@@ -210,14 +213,14 @@ Query 3: (1,1) → (1,5)  [Converts to 0-indexed: (0,0) → (0,4)]
   0 ≠ 2 → Output: "neither"
 
 Query 4: (4,1) → (5,3)  [Converts to 0-indexed: (3,0) → (4,2)]
-  component[3][0] = 4 (component 4)
+  component[3][0] = 1 (component 1)
   component[4][2] = 1 (component 1)
-  4 ≠ 1 → Output: "neither"
+  1 = 1, componentValue[1] = 1 → Output: "decimal"
 
 Query 5: (2,3) → (4,3)  [Converts to 0-indexed: (1,2) → (3,2)]
-  component[1][2] = 3 (component 3)
-  component[3][2] = 5 (component 5)
-  3 ≠ 5 → Output: "neither"
+  component[1][2] = 0 (component 0)
+  component[3][2] = 0 (component 0)
+  0 = 0, componentValue[0] = 0 → Output: "binary"
 
 Query 6: (2,2) → (3,5)  [Converts to 0-indexed: (1,1) → (2,4)]
   component[1][1] = 1 (component 1)
