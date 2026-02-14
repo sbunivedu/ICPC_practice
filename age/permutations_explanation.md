@@ -77,3 +77,37 @@ The power of backtracking is that it explores all possibilities by:
 3. Undoing the choice to explore alternatives
 
 This allows the code to be simple and elegant while exhaustively exploring the **solution space**.
+
+## Competitive Programming Lessons
+
+### 1. **Recognize Graph Problems in Disguise**
+The problem isn't about ages directly—it's a **Hamiltonian Path problem**. A strong competitive programmer identifies that arranging items with constraints maps to graph problems. Here: two ages can be adjacent if GCD > 1, making this an edge connectivity problem.
+
+### 2. **Precompute Relationships to Speed Up Search**
+Build an adjacency matrix O(n²) upfront to store all pairwise GCD values. During backtracking, you get O(1) constraint lookups instead of recalculating GCD repeatedly. This is a fundamental optimization: trade space for time.
+
+### 3. **Master the Backtracking Pattern: Choose-Explore-Unchoose**
+The core backtracking cycle is:
+- **Choose**: Make a decision (place an element)
+- **Explore**: Recursively solve the remaining problem
+- **Unchoose**: Undo the decision to try alternatives
+
+This pattern is ubiquitous in competitive programming (permutations, combinations, Sudoku, N-Queens, etc.).
+
+### 4. **Understand When to Use Permutations**
+Generate all possible orderings only when necessary. Here, searching all permutations is a brute-force approach that works for small n. Recognize that Hamiltonian Path is NP-complete—this algorithm scales poorly for n > 20.
+
+### 5. **Use Early Exit Conditions**
+Check for impossible cases first: ages containing 1 make GCD(1, x) = 1 always, so no valid arrangement exists. Early pruning saves time.
+
+### 6. **Implement Backtracking with Care**
+Whether recursive or iterative, maintain explicit state:
+- Track which elements are used (used[] flags)
+- Store the current partial solution (order[])
+- Properly restore state when backtracking
+
+### 7. **Clone or Copy Collections When Storing Results**
+When collecting permutations, use nums.clone() to add a copy of the array, not a reference. Otherwise, all stored results point to the same modified array.
+
+### 8. **Distinguish "No Solution" from "Algorithm Timeout"**
+A completed backtracking search that finds nothing is different from hitting time limits. Understanding algorithm limitations helps you decide when to optimize or change approaches in a competition.

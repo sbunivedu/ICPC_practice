@@ -33,3 +33,23 @@ Since d can be as large as 10^18, computing 9^(d-1) directly would take too long
 ### Time Complexity
 - O(log d) per test case for binary exponentiation
 - O(T × log d) overall, where T is the number of test cases
+
+## Key Takeaways for Competitive Programmers
+
+### 1. **Combinatorics is Powerful**
+Before reaching for complex algorithms, identify the mathematical structure. This problem reduces to a simple formula (8 × 9^(d-1)) through careful counting—recognizing that the first digit has 8 choices and remaining digits have 9 choices each.
+
+### 2. **Use Modular Arithmetic Throughout**
+When outputting results modulo a prime (1000000007), apply the modulo operation **during computation**, not just at the end. This prevents integer overflow on large intermediate values: `result %= 1000000007` after each multiplication.
+
+### 3. **Binary Exponentiation is Essential**
+With exponents reaching 10^18, naive exponentiation is impossible. **Fast exponentiation** reduces O(d) to O(log d) by exploiting the binary representation of the exponent—this technique is fundamental for modular exponentiation problems.
+
+### 4. **Think About Constraints Early**
+The constraint that d can be up to 10^18 signals that direct computation won't work. This forces you to think mathematically rather than simulate. Always analyze input bounds to guide your algorithmic choices.
+
+### 5. **Keep Intermediate Values Modulo-Reduced**
+Applying modulo after squaring the base (`base %= 1000000007`) prevents overflow and keeps numbers manageable throughout the algorithm.
+
+### 6. **Test with Edge Cases**
+The solution correctly handles d=1 (result is 8) and validates the formula with worked examples before implementing.
