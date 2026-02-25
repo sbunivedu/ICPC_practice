@@ -2,60 +2,61 @@ import java.util.HashSet;
 import java.util.Scanner;
 
 public class Main {
+  static boolean isAlien(long num, HashSet<Character> digits) {
+    for (char c : ("" + num).toCharArray()) {
+      if (digits.contains(c)) {
+        return false;
+      }
+    }
+    return true;
+  }
+
   public static void main(String[] args) {
     Scanner scan = new Scanner(System.in);
     long n = scan.nextLong();
     HashSet<Character> digits = new HashSet<>();
-    String str = ""+n;
+    String str = "" + n;
     for (char c : str.toCharArray()) {
       digits.add(c);
     }
-    // impossible case
-    if(str.length() >= 10 && digits.contains('0') && digits.contains('1') && digits.contains('2') && digits.contains('3') && digits.contains('4') && digits.contains('5') && digits.contains('6') && digits.contains('7') && digits.contains('8') && digits.contains('9')){
+
+    // impossible case: if n contains all 10 digits, no alien exists
+    if (digits.size() == 10) {
       System.out.println("Impossible");
       return;
     }
 
-    long high = n;
-    long low = n;
-    int offset = 1;
-    String result = "";
-    while(true){
-      high += offset;
-      low -= offset;
-      System.out.println("high: " + high + " low: " + low);
-      // check low
-      boolean found_low = true;
-      if (low >=0) {
-        for (char c : (""+low).toCharArray()) {
-          if(digits.contains(c)){
-            found_low = false;
-            break;
-          }
-        }
-        if(found_low){
-          result += low;
-        }
+    long low = n - 1;
+    long high = n + 1;
+
+    // Find closest alien numbers
+    while (low >= 0 || high >= 0) {
+      boolean foundLow = false;
+      boolean foundHigh = false;
+
+      if (low >= 0 && isAlien(low, digits)) {
+        foundLow = true;
       }
 
-      boolean found_high = true;
-      for (char c : (""+high).toCharArray()) {
-        if(digits.contains(c)){
-          found_high = false;
-          break;
-        }
+      if (high >= 0 && isAlien(high, digits)) {
+        foundHigh = true;
       }
-      if(found_low){
-        result += " ";
+
+      if (foundLow && foundHigh) {
+        System.out.println(low + " " + high);
+        return;
+      } else if (foundLow) {
+        System.out.println(low);
+        return;
+      } else if (foundHigh) {
+        System.out.println(high);
+        return;
       }
-      if(found_high){
-        result += high;
-      }
-      //offset++;
-      if(result.length() > 0){
-        System.out.println(result);
-        break;
-      }
+
+      low--;
+      high++;
     }
+
+    System.out.println("Impossible");
   }
 }
